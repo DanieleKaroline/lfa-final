@@ -1,14 +1,10 @@
-def afnd(fileList, auxList):
-    afnd = {}
-    alphabet = []
-    grammatic = []
+def afnd(fileList, auxList, afnd, alphabet, grammatic):
     for tokenR in auxList:
         if not tokenR: #terminou de ler os tokens
             fileList.remove(tokenR) #remove da lista de entrada
             break 
         gAfndToken(afnd, tokenR, alphabet)
         fileList.remove(tokenR) #remove da lista de entrada
-
 
     auxList = fileList.copy() #agora na lista de entrada, temos apenas as gramáticas para serem lidas
 
@@ -21,7 +17,8 @@ def afnd(fileList, auxList):
             else:
                 grammatic.append(ruleGread) 
                 fileList.remove(ruleGread)
-    print(grammatic)
+    print(afnd)
+    return afnd, alphabet, grammatic
 
 def gAfndToken(afnd, token, alphabet):
     if not afnd:
@@ -46,3 +43,4 @@ def gAfndToken(afnd, token, alphabet):
     
     afnd.update({len(afnd) : {'*': [1]}}) 
     print(afnd)
+
