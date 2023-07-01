@@ -1,27 +1,27 @@
-def charge(fileList, auxList):
-    afnd = {}
-    alphabet = []
-    grammatic = []
+from re import findall as find, match, split #biblioteca de expressões regulares
+from sources.functions import *
+
+def Charge(fileList, auxList, afnd):
     for tokenR in auxList:
         if not tokenR: #terminou de ler os tokens
             fileList.remove(tokenR) #remove da lista de entrada
             break 
-        gAfndToken(afnd, tokenR, alphabet)
+        GenerateAutToken(afnd, tokenR, alphabet)
         fileList.remove(tokenR) #remove da lista de entrada
 
     auxList = fileList.copy() #agora na lista de entrada, temos apenas as gramáticas para serem lidas
 
     while fileList:
-        for ruleGread in auxList:    
-            if not ruleGread: #após ler todas as regras da gramática, une as regras da gramática com as dos tokens
-                #gAfndgrammatic(afnd, grammatic, alphabet) 
+        for ruleGrRead in auxList:    
+            if not ruleGrRead: #após ler todas as regras da gramática, une as regras da gramática com as dos tokens
+                #GenerateAutGram(afnd, grammatic, alphabet) 
                 grammatic.clear() 
-                fileList.remove(ruleGread)
+                fileList.remove(ruleGrRead)
             else:
-                grammatic.append(ruleGread) 
-                fileList.remove(ruleGread)
+                grammatic.append(ruleGrRead) 
+                fileList.remove(ruleGrRead)
                 
-def gAfndToken(afnd, token, alphabet):
+def GenerateAutToken(afnd, token, alphabet):
     if not afnd:
         afnd.update({len(afnd): {}}) #gera o afnd com o index == (tamanho atual da afnd = 0, 1, 2, 3 -- Criando assim as regras), transição 0 é a inicial
     
@@ -46,11 +46,15 @@ def gAfndToken(afnd, token, alphabet):
     print(afnd)
 
 ####### main #######
+afnd = {}
+alphabet = []
+grammatic = []
+
 file = open("entrada.txt", "r") #abre arquivo
 fileString = file.read() #le e salva numa string
 fileList = fileString.split('\n') #separa a string, cada linha é uma da lista 
 auxList = fileList.copy() #copia a lista
-#teste print(fileString)
 
-charge(fileList, auxList)
 
+Charge(fileList, auxList, afnd)
+printAut(afnd, alphabet)

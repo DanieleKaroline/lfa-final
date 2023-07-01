@@ -1,5 +1,6 @@
-se 
-senao
+if 
+end
+else
 
- S:== aA | bA
- A:== aA | b
+<S> ::= aA | bA
+<A> ::= aA | bA | ε
