@@ -1,4 +1,4 @@
-def unirAutomatos(afd, afndTemp):
+def joinAut(afd, afndTemp):
     mapaNovosEstados = {x: x + len(afd) for x in range(len(afndTemp))} # cria um dicionário, com as novas posições na afnd principal das regras do afnd
     aux = []
 
@@ -19,11 +19,11 @@ def unirAutomatos(afd, afndTemp):
     for chave in afndTemp.keys():
         afd.update({mapaNovosEstados[chave] : afndTemp[chave]}) #cria os novos estados na afnd principal
 
-def unirListas(l1, l2):
+def joinList(l1, l2):
     return l1 + list(set(l2) - set(l1))
 
 
-def unirEstados(automato, estados):
+def joinState(automato, estados):
     # É feita a união de todos os estados do automato que estão na lista estados
     final = {} #simbolos e os estados acessíveis a partir dele, é atualizado a cada passagem pela função 
     def unir(estado):
