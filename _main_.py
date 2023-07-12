@@ -1,4 +1,3 @@
-from re import findall as find, match, split #biblioteca de expressões regulares
 from sources.functions import *
     
 ####### main #######
@@ -13,24 +12,24 @@ auxList = fileList.copy() #copia a lista
 
 #carga do automato
 for tokenLido in auxList:
+    #if not executará se tokenLido for vazio
     if not tokenLido: #terminou de ler os tokens
         fileList.remove(tokenLido) #remove da lista de entrada
         break 
     gerarAutToken(afnd, tokenLido, alfabeto) #adiciona ao afnd as regras de produção para o token lido
     fileList.remove(tokenLido) #remove da lista de entrada
-    # print(tokenLido) if e else//
 
-auxList = fileList.copy() #agora na lista de entrada, temos apenas as gramáticas para serem lidas
+auxList = fileList.copy() #na lista de entrada temos apenas as gramáticas para serem lidas
 
 while fileList:
-    for regraGramaticaLida in auxList:    
-        if not regraGramaticaLida: #após ler todas as regras da gramática, une as regras da gramática com as dos tokens
-            gerarAfndGramatica(afnd, gramatica, alfabeto) 
+    for regraGLida in auxList:    
+        if not regraGLida: #após ler todas as regras da gramática, une as regras da gramática com as dos tokens
+            gerarAutGramatica(afnd, gramatica, alfabeto) 
             gramatica.clear() 
-            fileList.remove(regraGramaticaLida)
+            fileList.remove(regraGLida)
         else:
-            gramatica.append(regraGramaticaLida) 
-            fileList.remove(regraGramaticaLida)
+            gramatica.append(regraGLida) 
+            fileList.remove(regraGLida)
         
 printAut(afnd, alfabeto)
 print("\n Determinizado: \n")
