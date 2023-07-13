@@ -1,32 +1,40 @@
 from re import findall as find, match, split #biblioteca de expressões regulares
 
 #função que gera o token do automato
-def gerarAutToken(afnd, token, alphabet):
-    #Verifica se o AFND está vazio. Se estiver vazio, adiciona um novo estado 
-    # vazio ao AFND usando afnd.update({len(afnd): {}}). 
-    # Essa etapa é necessária para criar as regras de transição do AFND
-    
+def gerarAutToken(afnd, token, alfabeto):
+
+    #Verifica se o AFND está vazio. 
     if not afnd:
-        afnd.update({len(afnd): {}}) 
+        afnd.update({len(afnd): {}}) #Se estiver, adiciona um novo estado vazio 
+    # Essa etapa é necessária para criar as regras de transição do AFND
 
     #Define uma variável tokenInicial como verdadeira para indicar que é o primeiro caractere do token.
     tokenInicial = True 
     
     for tk in token: # percorre a string do token 
-        if tk not in alphabet: # se o caracter ainda não estiver no alfabeto aceito
-            alphabet.append(tk) # adiciona no alfabeto da linguagem
-        
-        if tokenInicial:   # Token inicial vai para o primeiro estado do automato
-            mapeado = afnd[0] # 'ponteiro' para o estado inicial
+        if tk not in alfabeto: # se o caracter ainda não estiver no alfabeto aceito
+            alfabeto.append(tk) # adiciona no alfabeto da linguagem
 
+        #usada para lidar com o primeiro caractere do token
+        if tokenInicial:   #se for verdadeiro, isso significa que é o primeiro caractere do token e, ele deve ser mapeado para o estado inicial do autômato
+            mapeado = afnd[0] #atribuída ao primeiro estado do autômato 
+
+            # verifica se já existe uma regra de transição para o caractere tk no estado mapeado. 
+            # Se existir, adiciona uma transição para um novo
             if tk in mapeado.keys():
-                mapeado[tk].append(len(afnd)) #caso já exista uma regra com esse simbolo, adiciona uma transição para um novo estado para essa regra
+                mapeado[tk].append(len(afnd)) 
+
+            #Caso contrário, cria uma nova entrada no estado mapeado com a 
+            # chave tk e o valor sendo uma lista contendo o novo estado criado    
             else:
                 mapeado.update({tk : [len(afnd)]})
             tokenInicial = False
+
+        #se não for o primeiro caractere do token, cria um novo estado no autômato
         else:
             afnd.update({len(afnd) : {tk: [len(afnd) + 1]}}) # cria um novo estado, que irá levar para o próximo a partir do simbolo
-    
+
+    #adiciona uma regra de transição do último estado criado para o estado final
     afnd.update({len(afnd) : {'*': [1]}}) # quando chega ao final do token, o novo estado criado é final
 
 
@@ -49,7 +57,7 @@ def gerarAutGramatica(afnd, gramatica, alfabeto):
         else:
             indiceRegra = len(afndTemporario) #indice da regra
             afndTemporario.update({indiceRegra : {}}) #cria um novo estado do automato temporario
-            mapaRegras.update({simbolos[0]: indiceRegra}) #mapeia a regra, relacionando-a com o indice do novo estado criado no automato
+            mapaRegras.update({simbolos[0]: indiceRegra}) #mapeia a regra, relacionando com o indice do novo estado criado no automato
         #Itera sobre os símbolos da regra (exceto o primeiro símbolo)
         for simbolo in simbolos[1:]: #percorre as produções da regra
             terminal = find(r'^\w+', simbolo) 
@@ -58,7 +66,8 @@ def gerarAutGramatica(afnd, gramatica, alfabeto):
             #Verifica se o terminal não está no alfabeto. Se não estiver, adiciona-o ao alfabeto
             if terminal not in alfabeto: #caso o caracter nao esteja no alfabeto
                 alfabeto.append(terminal) #adiciona ao alfabeto da gramática
-            #verifica se é um não terminal. Se for um terminal, gera uma regra que tem uma transição para um estado terminal no afndTemporario.
+
+            #verifica se é um não terminal. 
             if not naoTerminal:       # produção sem não terminal, gera uma regra que tem transição para um estado terminal
                 rg = afndTemporario[indiceRegra] #ponteiro para o estado correspondente a regra sendo lida
 
@@ -77,7 +86,7 @@ def gerarAutGramatica(afnd, gramatica, alfabeto):
                     rg = mapaRegras[naoTerminal] #armazena o indice do estado do automato correspondente a regra lida
                 else: # se nao estiver mapeada, cria um novo estado no automato
                     rg = len(afndTemporario) #indice do novo estado
-                    mapaRegras.update({naoTerminal: rg}) #mapeia a regra, relacionando-a com o indice do novo estado criado no automato
+                    mapaRegras.update({naoTerminal: rg}) #mapeia a regra, relacionando com o indice do novo estado criado no automato
                     afndTemporario.update({rg: {}}) #cria um novo estado do automato temporario
                 
                 mp = afndTemporario[indiceRegra] #ponteiro para o estado do automato corresponde a regra sendo lida
@@ -125,18 +134,24 @@ def eliminarInalcancaveis(afnd):
     visitados = set()
 
     def elimina(regra, estado): #utiliza uma dfs para remover recursivamente
+        # verifica se o estado atual já foi visitado 
         if estado in visitados:
             return
         
+        #se o estado atual não estiver nos estados visitados, ele é adicionado 
         visitados.add(estado)
         
+        # percorre todas as chaves das regras de transição do estado atual
         for chave in regra.keys():
             if chave == '*':
                 continue
+
+            #percorre todos os índices dos estados de destino para a chave atual
             for i in regra[chave]:
                 elimina(afnd[i], i)
 
     elimina(afnd[0], 0)
+    #definido como o número total de estados no AFND
     x = len(afnd)
 
     for i in range(x):
